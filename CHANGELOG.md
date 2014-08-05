@@ -1,3 +1,6 @@
+- Update, possible breaking change: the edxapp role vars edxapp_lms_env and edxapp_cms_env have
+  been changed to EDXAPP_LMS_ENV and EDXAPP_CMS_ENV to indicate, via our convention,
+  that overridding them is expected.  The default values remain the same.
 - Role: analytics-api
   - Added a new role for the analytics-api Django app.  Currently a private repo
 
