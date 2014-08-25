@@ -1,4 +1,4 @@
-# ansible-playbook -i ./lifecycle_inventory.py ./retire_host.yml 
+# ansible-playbook -i ./lifecycle_inventory.py ./retire_host.yml
 # -e@/vars/env.yml --limit Terminating_Wait
 
 #
@@ -19,24 +19,9 @@
   sudo: True
   gather_facts: False
   tasks:
-    - name: Force a log rotation
-      command: /usr/sbin/logrotate -f /etc/logrotate.d/{{ item }}
-      with_items:
-        - "apport"
-        - "apt"
-        - "aptitude"
-        - "dpkg"
-        - "hourly"
-        - "landscape-client"
-        - "newrelic-sysmond"
-        - "nginx"
-        - "nginx-access"
-        - "nginx-error"
-        - "ppp"
-        - "rsyslog"
-        - "ufw"
-        - "unattended-upgrades"
-        - "upstart"
+    # We only force a rotation of edx logs.
+    # Forced rotation of system logfiles will only
+    # work if there hasn't already been a previous rotation
     - name: Force a log rotation
       command: /usr/sbin/logrotate -f /etc/logrotate.d/hourly/{{ item }}
       with_items:
@@ -47,7 +32,7 @@
     - name: Send logs to s3
       command: /edx/bin/send-logs-to-s3
 
-      
+
 - name: Run minos verification
   hosts: Terminating_Wait
   sudo: True
