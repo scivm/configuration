@@ -29,6 +29,9 @@
 - name: install packages needed for single server
   apt: pkg={{','.join(edxlocal_debian_pkgs)}} install_recommends=yes state=present
 
+- name: ensure mysql is running and starts on boot
+  service: name=mysql state=started enabled=true
+
 - name: copy .my.cnf file with root password credentials
   template: >
     src=".my.cnf"
