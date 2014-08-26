@@ -21,19 +21,22 @@
 - name: install packages needed for single server
   apt: pkg={{','.join(edxlocal_debian_pkgs)}} install_recommends=yes state=present
 
-#- name: update mysql root password for all root accounts
-#   mysql_user: name=root host={{ item }} password={{ mysql_root_password }}
-#    with_items:
-#       - "{{ ansible_hostname }}"
-#       - 127.0.0.1
-#       - ::1
-#       - localhost
-
 - name: copy .my.cnf file with root password credentials
   template: >
     src=".my.cnf"
     dest="/root/.my.cnf"
     mode="0600" owner="root" group="root"
+
+- name: update mysql root password for all root accounts
+  mysql_user: >
+    name=root host={{ item }}
+    password={{ EDXAPP_MYSQL_PASSWORD }}
+    priv=*.*:ALL,GRANT
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
 
 - name: setup the edxapp db user
   mysql_user: >
