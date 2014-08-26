@@ -1,0 +1,43 @@
+-In a new Ubuntu 12.04 server, install MongoDB with the following commands:
+
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+	echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+	sudo apt-get update
+	sudo apt-get install mongodb-10gen
+
+-Configure MongoDb to allow access from any computer, by editing the /etc/mongodb.conf file and adding 
+	bind_ip = 0.0.0.0
+	port = 27017
+
+I strongly recommend you also set up some firewall in this computer, like Ubuntu's ufw. 
+
+-Install MySQL with this command: 
+	apt-get install mysql-server
+
+-Configure mysql to allow external access for the root user. In /etc/mysql/my.cnf add the line:
+	bind-address = 0.0.0.0
+
+and also execute the following mysql commands:
+
+	GRANT ALL PRIVILEGES ON *.* TO root@'%';
+	FLUSH PRIVILEGES;
+
+I think you only need to assign privileges on the edxapp, ora and xqueue databases so you probably could be more restrictive in the grant order.
+
+-Backup your data and restore it in the new server. You can do it with:
+	mongodump -o ./mongo-backup
+	mongorestore -drop ./mongo-backup
+	mysqldump -u root -p --all-databases > ./backup.sql
+	mysql -u root -p < ./backup.sql
+
+-Configure the edx servers to use the new database server. You'll need to edit the following files and change the host/users/passwords in accordance to your db server settings:
+ 
+ 	lms.auth.json
+	cms.auth.json
+	ora.auth.json
+	xqueue.auth.json
+	forum/forum_env
+
+-In the edx servers you can stop the mysql and mongodb services. To prevent them to start when booting the system, create the text files /etc/init/mysql.override and /etc/init/mongodb.override with the string:
+ 	manual
+into them.
