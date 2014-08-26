@@ -18,6 +18,14 @@
   action: raw sudo echo mysql-server mysql-server/root_password_again password $EDXAPP_MYSQL_PASSWORD | sudo /usr/bin/debconf-set-selections
   tags: mysql
 
+- name: MySQL | Set debconf vars
+  action: raw sudo echo mysql-server-5.5 mysql-server/root_password password $EDXAPP_MYSQL_PASSWORD | sudo /usr/bin/debconf-set-selections
+  tags: mysql
+
+- name: MySQL | Set debconf vars
+  action: raw sudo echo mysql-server-5.5 mysql-server/root_password_again password $EDXAPP_MYSQL_PASSWORD | sudo /usr/bin/debconf-set-selections
+  tags: mysql
+
 - name: install packages needed for single server
   apt: pkg={{','.join(edxlocal_debian_pkgs)}} install_recommends=yes state=present
 
